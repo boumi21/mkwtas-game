@@ -1,0 +1,10 @@
+; Private settings template file
+; Duplicate this file and remove the ".template" from the name
+; Then fill in your informations in the newly created file
+
+
+[database]
+host = "localhost"
+dbname = "db_mkwtas"
+user = "root"
+password = ""
