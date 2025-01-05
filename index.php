@@ -12,7 +12,6 @@ $dbRequester = new DatabaseRequests($bdd);
 <main>
     <?php
     $players = $dbRequester->getAllPlayers();
-    print_r($players);
     ?>
 
     <div class="container">
