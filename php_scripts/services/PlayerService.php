@@ -1,6 +1,7 @@
 <?php
 
 require_once 'db_requests.php';
+require_once 'dto/Player.php';
 
 class PlayerService
 {
@@ -14,25 +15,30 @@ class PlayerService
     
 
     // Get specific player
-    public function getPlayer(int $idPlayer)
+    public function getPlayerFromDb(int $idPlayer)
     {
         return $this->dbRequester->getPlayer($idPlayer);
     }
     
-
     // Get player's country (ISO fromat)
     public function getPlayerCountry(int $idPlayer){
         return $this->dbRequester->getPlayerCountry($idPlayer);
     }
 
-    // Get total number of records for a player
-    public function getPlayerNbrRecords(int $idPlayer){
-        return $this->dbRequester->getPlayerNbrRecords($idPlayer);
+    // Get all IDs of records for a player
+    public function getPlayerIdsRecords(int $idPlayer){
+        return $this->dbRequester->getPlayerIdsRecords($idPlayer);
     }
 
-    // Get number of collaborations for a player
-    public function getNbrCollabsFromRecords(int $idPlayer){
-        return $this->dbRequester->getNbrCollabsFromRecords($idPlayer);
+    // Get number of records for a player
+    public function getPlayerNbrRecords(int $idPlayer){
+        $idsRecords = $this->getPlayerIdsRecords($idPlayer);
+        return count($idsRecords);
+    }
+
+    // Get number of collaborations from an array of records
+    public function getNbrCollabsFromRecords(array $idsRecords){
+        return $this->dbRequester->getNbrCollabsFromRecords($idsRecords);
     }
 
     // Get the year of the first record for a player
@@ -41,20 +47,28 @@ class PlayerService
     }
 
     // Get the 3 last tracks from a player
-    // Returns the 3 last tracks with this format : 1_2_3
     public function getPlayerLastTracks(int $idPlayer){
+
         return $this->dbRequester->getPlayerLastTracks($idPlayer);
     }
 
 
     
-    public function getNextPLayerDetails(int $idPlayer){
-        $name = $this->getPlayer($idPlayer)['name_player'];
-        $country = $this->getPlayerCountry($idPlayer);
-        $nbrRecords = $this->getPlayerNbrRecords($idPlayer);
-        $nbrCollabs = $this->getNbrCollabsFromRecords($idPlayer);
+    public function getPlayerInfos(int $idPlayer){
+
+        $playerLight = $this->getPlayerFromDb($idPlayer);
+        $playerIdsRecords = $this->getPlayerIdsRecords($idPlayer);
+
+        $name = $playerLight['name_player'];
+        $country = $playerLight['country'];
+        $nbrRecords = count($playerIdsRecords);
+        $nbrCollabs = $this->getNbrCollabsFromRecords($playerIdsRecords);
         $firstYearRecord = $this->getPlayerFirstRecordYear($idPlayer);
         $lastTracks = $this->getPlayerLastTracks($idPlayer);
+
+        $playerDetails = new Player($idPlayer, $name, $country, $nbrRecords, $nbrCollabs, $firstYearRecord, $lastTracks);
+
+
 
         return array('name' => $name, 'country' => $country, 'nbrRecords' => $nbrRecords, 'nbrCollabs' => $nbrCollabs, 'firstYearRecord' => $firstYearRecord, 'lastTracks' => $lastTracks);
     }

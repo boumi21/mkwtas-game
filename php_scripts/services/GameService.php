@@ -30,6 +30,13 @@ class GameService
         return $this->dbRequester->getLastXPlayers();
     }
 
+    // Get current game
+    // Returns null if no game is found
+    public function getCurrentGame()
+    {
+        return $this->dbRequester->getCurrentGame();
+    }
+
     // Get next game after current one
     // Returns null if no game is found
     public function getNextGame(){

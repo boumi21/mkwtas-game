@@ -14,15 +14,16 @@ $dbRequester = new DatabaseRequests($bdd);
     $players = $dbRequester->getAllPlayers();
     ?>
 
-    <div class="container">
+    <div class="container" x-data="gameApp()">
         <div class="row">
             <div class="col-md-6">
-                <form>
+                <form @submit.prevent="guessName">
                     <div class="input-group">
                         <select
                             id="select"
                             placeholder="Select a person..."
-                            onchange="this.form.submit()"
+                            x-on:change="guessName"
+                            x-model="formData.idPlayer"
                             required>
                             <option value="">Select a person...</option>
                             <?php
@@ -106,6 +107,39 @@ $dbRequester = new DatabaseRequests($bdd);
 <script>
     var settings = {};
     new TomSelect('#select', settings);
+
+
+
+    function gameApp() {
+        return {
+            formData: {
+                idPlayer: ''
+            },
+            guessName() {
+                fetch('php_scripts/guess.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(this.formData)
+                    })
+                    .then(function(response) {
+                        if (!response.ok) {
+                            return response.json().then(error => {
+                                throw new Error(error.error);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(function(json) {
+                        console.log(json.idPlayer);
+                    })
+                    .catch((e) => {
+                        console.error('er : ', e);
+                    })
+            }
+        }
+    }
 </script>
 
 <?php

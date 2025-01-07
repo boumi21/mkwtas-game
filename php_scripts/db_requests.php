@@ -46,9 +46,9 @@ class DatabaseRequests
      }
  
      // Get player number of records
-     public function getPlayerNbrRecords(int $idPlayer)
+     public function getPlayerIdsRecords(int $idPlayer)
      {
-         $query = "SELECT COUNT(*) FROM record_with_players WHERE id_player = ?";
+         $query = "SELECT id_record FROM record_with_players WHERE id_player = ?";
          $stmt = $this->bdd->prepare($query);
          $stmt->execute([$idPlayer]);
          return $stmt->fetchColumn();
