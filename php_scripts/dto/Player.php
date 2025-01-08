@@ -7,9 +7,9 @@ class Player {
     private int $nbrRecords;
     private int $nbrCollabs;
     private int $firstRecordYear;
-    private string $lastTracks;
+    private array $lastTracks;
 
-    public function __construct(int $id, string $name, string $country, int $nbrRecords, int $nbrCollabs, int $firstRecordYear, string $lastTracks) {
+    public function __construct(int $id, string $name, string $country, int $nbrRecords, int $nbrCollabs, int $firstRecordYear, array $lastTracks) {
         $this->id = $id;
         $this->name = $name;
         $this->country = $country;
@@ -44,7 +44,7 @@ class Player {
         return $this->firstRecordYear;
     }
 
-    public function getLastTracks(): string {
+    public function getLastTracks(): array {
         return $this->lastTracks;
     }
 
@@ -73,7 +73,7 @@ class Player {
         $this->firstRecordYear = $firstRecordYear;
     }
 
-    public function setLastTracks(string $lastTracks): void {
+    public function setLastTracks(array $lastTracks): void {
         $this->lastTracks = $lastTracks;
     }
 }

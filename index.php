@@ -132,7 +132,7 @@ $dbRequester = new DatabaseRequests($bdd);
                         return response.json();
                     })
                     .then(function(json) {
-                        console.log(json.idPlayer);
+                        console.log(json);
                     })
                     .catch((e) => {
                         console.error('er : ', e);

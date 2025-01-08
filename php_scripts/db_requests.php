@@ -51,7 +51,7 @@ class DatabaseRequests
          $query = "SELECT id_record FROM record_with_players WHERE id_player = ?";
          $stmt = $this->bdd->prepare($query);
          $stmt->execute([$idPlayer]);
-         return $stmt->fetchColumn();
+         return $stmt->fetchAll(PDO::FETCH_COLUMN);
      }
  
      // Get number of collabs form an array of records
