@@ -2,16 +2,19 @@
 
 require_once 'db_requests.php';
 require_once 'dto/Player.php';
-require_once '../php_includes/constants.php';
+require_once '../php_includes/utils.php';
+require_once 'TrackService.php';
 
 class PlayerService
 {
 
     private DatabaseRequests $dbRequester;
+    private TrackService $trackService;
 
     public function __construct(PDO $bdd)
     {
         $this->dbRequester = new DatabaseRequests($bdd);
+        $this->trackService = new TrackService($bdd);
     }
 
 
@@ -59,7 +62,12 @@ class PlayerService
         return $this->dbRequester->getPlayerLastTracks($idPlayer);
     }
 
-    // Get all details for a player
+    /**
+     * Retrieves player information based on the provided player ID.
+     *
+     * @param int $idPlayer The ID of the player whose information is to be retrieved.
+     * @return array An associative array containing player information.
+     */
     public function getPlayerInfos(int $idPlayer)
     {
 
@@ -78,69 +86,27 @@ class PlayerService
         return $playerDetails;
     }
 
-    // Compare two players
+    
+    /**
+     * Compares two players based on their IDs.
+     *
+     * @param int $idGuessedPlayer The ID of the guessed player.
+     * @param int $idCurrentPlayer The ID of the current player.
+     * @return array An array that acts as a view model.
+     */
     public function comparePlayers(int $idGuessedPlayer, int $idCurrentPlayer)
     {
         $guessedPlayer = $this->getPlayerInfos($idGuessedPlayer);
         $currentPlayer = $this->getPlayerInfos($idCurrentPlayer);
 
-        //name
-        $name = array(
-            'value' => $guessedPlayer->name,
-            'status' => ($guessedPlayer->name == $currentPlayer->name ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
-        );
+        $name = $this->compareName($guessedPlayer, $currentPlayer);
+        $country = $this->compareCountry($guessedPlayer, $currentPlayer);
+        $firstRecordYear = $this->compareFirstRecordYear($guessedPlayer, $currentPlayer);
+        $nbrRecords = $this->compareNbrRecords($guessedPlayer, $currentPlayer);
+        $nbrCollabs = $this->compareNbrCollabs($guessedPlayer, $currentPlayer);
+        $lastTracks = $this->compareLastTracks($guessedPlayer, $currentPlayer);
 
-        $country = array(
-            'value' => $guessedPlayer->country,
-            'status' => ($guessedPlayer->country == $currentPlayer->country ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
-        );
-
-        $firstRecordYear = array(
-            'value' => $guessedPlayer->firstRecordYear,
-            'status' => ($guessedPlayer->firstRecordYear == $currentPlayer->firstRecordYear ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
-        );
-
-        if ($guessedPlayer->nbrRecords == $currentPlayer->nbrRecords){
-            $statusNbrRecords = GuessStatus::CORRECT->value;
-        } else {
-            $statusNbrRecords = $guessedPlayer->nbrRecords < $currentPlayer->nbrRecords ? GuessStatus::MORE->value : GuessStatus::LESS->value;
-        }
-        $nbrRecords = array(
-            'value' => $guessedPlayer->nbrRecords,
-            'status' => $statusNbrRecords
-        );
-
-        if ($guessedPlayer->nbrCollabs == $currentPlayer->nbrCollabs){
-            $statusNbrCollabs = GuessStatus::CORRECT->value;
-        } else {
-            $statusNbrCollabs = $guessedPlayer->nbrCollabs < $currentPlayer->nbrCollabs ? GuessStatus::MORE->value : GuessStatus::LESS->value;
-        }
-        $nbrCollabs = array(
-            'value' => $guessedPlayer->nbrCollabs,
-            'status' => $statusNbrCollabs
-        );
-
-        foreach ($guessedPlayer->lastTracks as $key => $track) {
-
-            if(array_key_exists($key, $currentPlayer->lastTracks)){
-                if($track == $currentPlayer->lastTracks[$key]){
-                    $statusTrack = GuessStatus::CORRECT->value;
-                } else {
-                    if(in_array($track, $currentPlayer->lastTracks)){
-                        $statusTrack = GuessStatus::PRESENT->value;
-                    } else {
-                        $statusTrack = GuessStatus::INCORRECT->value;
-                    }
-                }
-    
-                $lastTracks[$key] = array(
-                    'value' => $track,
-                    'status' => $statusTrack
-                );
-            }
-        }
-
-        $totalArray = array(
+        return array(
             'guessedPlayer' => array(
                 'name' => $name,
                 'country' => $country,
@@ -150,7 +116,80 @@ class PlayerService
                 'lastTracks' => $lastTracks
             )
         );
+    }
 
-        return $totalArray;
+    private function compareName($guessedPlayer, $currentPlayer)
+    {
+        return array(
+            'value' => $guessedPlayer->name,
+            'status' => ($guessedPlayer->name == $currentPlayer->name ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
+        );
+    }
+
+    private function compareCountry($guessedPlayer, $currentPlayer)
+    {
+        return array(
+            'value' => getCountryNameFromCode($guessedPlayer->country),
+            'status' => ($guessedPlayer->country == $currentPlayer->country ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
+        );
+    }
+
+    private function compareFirstRecordYear($guessedPlayer, $currentPlayer)
+    {
+        return array(
+            'value' => $guessedPlayer->firstRecordYear,
+            'status' => ($guessedPlayer->firstRecordYear == $currentPlayer->firstRecordYear ? GuessStatus::CORRECT->value : GuessStatus::INCORRECT->value)
+        );
+    }
+
+    private function compareNbrRecords($guessedPlayer, $currentPlayer)
+    {
+        if ($guessedPlayer->nbrRecords == $currentPlayer->nbrRecords){
+            $statusNbrRecords = GuessStatus::CORRECT->value;
+        } else {
+            $statusNbrRecords = $guessedPlayer->nbrRecords < $currentPlayer->nbrRecords ? GuessStatus::MORE->value : GuessStatus::LESS->value;
+        }
+        return array(
+            'value' => $guessedPlayer->nbrRecords,
+            'status' => $statusNbrRecords
+        );
+    }
+
+    private function compareNbrCollabs($guessedPlayer, $currentPlayer)
+    {
+        if ($guessedPlayer->nbrCollabs == $currentPlayer->nbrCollabs){
+            $statusNbrCollabs = GuessStatus::CORRECT->value;
+        } else {
+            $statusNbrCollabs = $guessedPlayer->nbrCollabs < $currentPlayer->nbrCollabs ? GuessStatus::MORE->value : GuessStatus::LESS->value;
+        }
+        return array(
+            'value' => $guessedPlayer->nbrCollabs,
+            'status' => $statusNbrCollabs
+        );
+    }
+
+    private function compareLastTracks($guessedPlayer, $currentPlayer)
+    {
+        $lastTracks = array();
+        $lastTracksInfos = $this->trackService->getTracksFromIds($guessedPlayer->lastTracks);
+
+        foreach ($lastTracksInfos as $key => $track) {
+            if(array_key_exists($key, $currentPlayer->lastTracks)){
+                if($track['id_track'] == $currentPlayer->lastTracks[$key]){
+                    $statusTrack = GuessStatus::CORRECT->value;
+                } else {
+                    if(in_array($track['id_track'], $currentPlayer->lastTracks)){
+                        $statusTrack = GuessStatus::PRESENT->value;
+                    } else {
+                        $statusTrack = GuessStatus::INCORRECT->value;
+                    }
+                }
+                $lastTracks[$key] = array(
+                    'value' => $track['name_track'],
+                    'status' => $statusTrack
+                );
+            }
+        }
+        return $lastTracks;
     }
 }

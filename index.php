@@ -209,25 +209,25 @@ $dbRequester = new DatabaseRequests($bdd);
                         }
                         return response.json();
                     })
-                    .then(function(json) {
-                        console.log(json);
+                    .then(function(guessInfos) {
+                        console.log(guessInfos);
 
-                        var guessInfos = {
-                            guessedPlayer: {
-                                name: {
-                                    value: 'Thomas',
-                                    status: 'incorrect'
-                                },
-                                country: {
-                                    value: 'en',
-                                    status: 'incorrect'
-                                },
-                                nbrRecords: {
-                                    value: 8,
-                                    status: 'less'
-                                }
-                            }
-                        };
+                        // var guessInfos = {
+                        //     guessedPlayer: {
+                        //         name: {
+                        //             value: 'Thomas',
+                        //             status: 'incorrect'
+                        //         },
+                        //         country: {
+                        //             value: 'en',
+                        //             status: 'incorrect'
+                        //         },
+                        //         nbrRecords: {
+                        //             value: 8,
+                        //             status: 'less'
+                        //         }
+                        //     }
+                        // };
 
                         return guessInfos;
 
@@ -236,13 +236,11 @@ $dbRequester = new DatabaseRequests($bdd);
                         console.error('er : ', e);
                     })
 
-                    console.log(test);
                     this.guessedPlayers.push(test);
                     this.teste();
             },
             teste() {
                 console.log('test');
-                //this.correctPlayer.name = 'test';
             }
         }
     }

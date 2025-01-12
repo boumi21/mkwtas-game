@@ -1,6 +1,6 @@
 <?php
 
-require_once __DIR__ . '/../php_includes/constants.php';
+require_once __DIR__ . '/../php_includes/utils.php';
 
 class DatabaseRequests
 {
@@ -15,7 +15,7 @@ class DatabaseRequests
 
 
 
-    
+
     /* PLAYER REQUESTS */
 
     // Get all players
@@ -36,28 +36,28 @@ class DatabaseRequests
         return $stmt->fetch();
     }
 
-     // Get player country
-     public function getPlayerCountry(int $idPlayer)
-     {
-         $query = "SELECT country FROM player WHERE id_player = ?";
-         $stmt = $this->bdd->prepare($query);
-         $stmt->execute([$idPlayer]);
-         return $stmt->fetchColumn();
-     }
- 
-     // Get player number of records
-     public function getPlayerIdsRecords(int $idPlayer)
-     {
-         $query = "SELECT id_record FROM record_with_players WHERE id_player = ?";
-         $stmt = $this->bdd->prepare($query);
-         $stmt->execute([$idPlayer]);
-         return $stmt->fetchAll(PDO::FETCH_COLUMN);
-     }
- 
-     // Get number of collabs form an array of records
-     public function getNbrCollabsFromRecords(array $idsRecords)
-     {
-         $query = "SELECT
+    // Get player country
+    public function getPlayerCountry(int $idPlayer)
+    {
+        $query = "SELECT country FROM player WHERE id_player = ?";
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute([$idPlayer]);
+        return $stmt->fetchColumn();
+    }
+
+    // Get player number of records
+    public function getPlayerIdsRecords(int $idPlayer)
+    {
+        $query = "SELECT id_record FROM record_with_players WHERE id_player = ?";
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute([$idPlayer]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    // Get number of collabs form an array of records
+    public function getNbrCollabsFromRecords(array $idsRecords)
+    {
+        $query = "SELECT
                      COUNT(sub.nbr_player)
                  FROM
                      (
@@ -72,15 +72,15 @@ class DatabaseRequests
                  ) sub
                  WHERE
                      sub.nbr_player > 1;";
-         $stmt = $this->bdd->prepare($query);
-         $stmt->execute();
-         return $stmt->fetchColumn();
-     }
- 
-     // Get year's first record from player
-     public function getPlayerFirstRecordYear(int $idPlayer)
-     {
-         $query = "SELECT
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchColumn();
+    }
+
+    // Get year's first record from player
+    public function getPlayerFirstRecordYear(int $idPlayer)
+    {
+        $query = "SELECT
                      MIN(YEAR(r.date_record)) AS 'year'
                  FROM
                      record r
@@ -88,15 +88,15 @@ class DatabaseRequests
                      r.id_record = rwp.id_record
                  WHERE
                      id_player = ?;";
-         $stmt = $this->bdd->prepare($query);
-         $stmt->execute([$idPlayer]);
-         return $stmt->fetchColumn();
-     }
- 
-     // Get last 3 tracks from player
-     public function getPlayerLastTracks(int $idPlayer)
-     {
-         $query = "SELECT
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute([$idPlayer]);
+        return $stmt->fetchColumn();
+    }
+
+    // Get last 3 tracks from player
+    public function getPlayerLastTracks(int $idPlayer)
+    {
+        $query = "SELECT
                      r.id_track
                  FROM
                      record r
@@ -107,13 +107,22 @@ class DatabaseRequests
                  ORDER BY
                      r.date_record DESC
                  LIMIT 3;";
-         $stmt = $this->bdd->prepare($query);
-         $stmt->execute([$idPlayer]);
-         return $stmt->fetchAll(PDO::FETCH_COLUMN);
-     }
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute([$idPlayer]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
 
 
-
+    // GetTracksFromIds
+    public function getTracksFromIds(array $idsTracks)
+    {
+        $query = "SELECT * FROM track 
+                    WHERE id_track IN(" . implode(',', $idsTracks) . ") 
+                    ORDER BY FIELD(id_track, " . implode(',', $idsTracks) . ")";
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 
 
     /* GAME REQUESTS */
