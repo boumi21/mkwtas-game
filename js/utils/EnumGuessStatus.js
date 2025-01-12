@@ -1,0 +1,1 @@
+const guessStatus = Object.freeze({"correct":1, "incorrect":2, "present":3, "less":4, "more":5});

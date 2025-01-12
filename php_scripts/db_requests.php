@@ -234,7 +234,7 @@ class DatabaseRequests
     public function insertNextGames(array $idsPlayers)
     {
         $query = "INSERT INTO `game_details` (id_player, id_status) VALUES ";
-        $query .= implode(',', array_map(function ($idPlayer, int $idStatus = Status::FUTURE->value) {
+        $query .= implode(',', array_map(function ($idPlayer, int $idStatus = GameStatus::FUTURE->value) {
             return "($idPlayer, $idStatus)";
         }, $idsPlayers));
         $stmt = $this->bdd->prepare($query);
@@ -251,11 +251,11 @@ class DatabaseRequests
                 SET gd.id_status = ?
                 WHERE gs.name = 'current'";
             $stmt = $this->bdd->prepare($queryAddPassedStatus);
-            $stmt->execute([Status::PASSED->value]);
+            $stmt->execute([GameStatus::PASSED->value]);
 
             $queryAddCurrentStatus = "UPDATE `game_details` SET id_status = ?, `date` = CURDATE() WHERE id_game = ?";
             $stmt = $this->bdd->prepare($queryAddCurrentStatus);
-            $stmt->execute([Status::CURRENT->value, $idNextGame]);
+            $stmt->execute([GameStatus::CURRENT->value, $idNextGame]);
             $this->bdd->commit();
         } catch (Exception $e) {
             $this->bdd->rollBack();

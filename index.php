@@ -37,11 +37,12 @@ $dbRequester = new DatabaseRequests($bdd);
                 </form>
             </div>
         </div>
-        <div class="container bg-primary">
+        <div id="player-to-guess" class="container bg-primary">
             <div class="row">
                 <div class="col-md-4">
                     <label for="displayName" class="form-label">Name</label>
                     <input
+                        x-model="correctPlayer.name"
                         type="text"
                         class="form-control"
                         id="displayName"
@@ -98,6 +99,73 @@ $dbRequester = new DatabaseRequests($bdd);
             </div>
         </div>
 
+        <hr>
+        <template x-for="player in guessedPlayers">
+            <div class="container bg-primary">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="displayName" class="form-label">Name</label>
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="displayName"
+                            disabled
+                            readonly>
+                    </div>
+                </div>
+                <hr>
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="row g-3">
+                            <div class="col-md-6 order-md-1">
+                                <label for="displayCountry" class="form-label">Country</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="displayCountry"
+                                    disabled
+                                    readonly>
+                            </div>
+                            <div class="col-md-6 order-md-3">
+                                <label for="displayFirstYear" class="form-label">First TAS year</label>
+                                <input type="text"
+                                    class="form-control"
+                                    id="displayFirstYear"
+                                    disabled
+                                    readonly>
+                            </div>
+                            <div class="col-md-6 order-md-2">
+                                <label for="displayNbrTas" class="form-label"># of TAS</label>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="displayNbrTas"
+                                    disabled
+                                    readonly>
+                            </div>
+                            <div class="col-md-6 order-md-4">
+                                <label for="displayNbrCollabs" class="form-label"># of collabs</label>
+                                <input type="text"
+                                    class="form-control"
+                                    id="displayNbrCollabs"
+                                    disabled
+                                    readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Last 3 TAS</label>
+                        <input type="text" class="form-control" id="inputCity">
+                        <input type="text" class="form-control" id="inputCity">
+                        <input type="text" class="form-control" id="inputCity">
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+
+
+
 </main>
 <footer>
     yooooo
@@ -105,6 +173,7 @@ $dbRequester = new DatabaseRequests($bdd);
 </footer>
 
 <script>
+
     var settings = {};
     new TomSelect('#select', settings);
 
@@ -115,8 +184,17 @@ $dbRequester = new DatabaseRequests($bdd);
             formData: {
                 idPlayer: ''
             },
-            guessName() {
-                fetch('php_scripts/guess.php', {
+            correctPlayer: {
+                name: "",
+                country: "",
+                nbrRecords: "",
+                nbrCollabs: "",
+                firstYearRecord: "",
+                lastTracks: []
+            },
+            guessedPlayers: [],
+            async guessName() {
+                var test = await fetch('php_scripts/guess.php', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -133,10 +211,38 @@ $dbRequester = new DatabaseRequests($bdd);
                     })
                     .then(function(json) {
                         console.log(json);
+
+                        var guessInfos = {
+                            guessedPlayer: {
+                                name: {
+                                    value: 'Thomas',
+                                    status: 'incorrect'
+                                },
+                                country: {
+                                    value: 'en',
+                                    status: 'incorrect'
+                                },
+                                nbrRecords: {
+                                    value: 8,
+                                    status: 'less'
+                                }
+                            }
+                        };
+
+                        return guessInfos;
+
                     })
                     .catch((e) => {
                         console.error('er : ', e);
                     })
+
+                    console.log(test);
+                    this.guessedPlayers.push(test);
+                    this.teste();
+            },
+            teste() {
+                console.log('test');
+                //this.correctPlayer.name = 'test';
             }
         }
     }
