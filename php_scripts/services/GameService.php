@@ -78,8 +78,8 @@ class GameService
     /*
         Methods if we store players details in game_details table
     */
-    public function insertNextPlayerDetails(string $name, string $country, int $nbrRecords, int $nbrCollabs, int $firstYearRecord, string $lastTracks){
-        $this->dbRequester->insertNextPlayerDetails($name, $country, $nbrRecords, $nbrCollabs, $firstYearRecord, $lastTracks);
+    public function insertNextPlayerDetails(string $name, string $country, int $nbrRecords, int $nbrCollabs, int $firstRecordYear, string $lastTracks){
+        $this->dbRequester->insertNextPlayerDetails($name, $country, $nbrRecords, $nbrCollabs, $firstRecordYear, $lastTracks);
     }
 
 

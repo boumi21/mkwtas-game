@@ -78,10 +78,10 @@ class PlayerService
         $country = $playerLight['country'];
         $nbrRecords = count($playerIdsRecords);
         $nbrCollabs = $this->getNbrCollabsFromRecords($playerIdsRecords);
-        $firstYearRecord = $this->getPlayerFirstRecordYear($idPlayer);
+        $firstRecordYear = $this->getPlayerFirstRecordYear($idPlayer);
         $lastTracks = $this->getPlayerLastTracks($idPlayer);
 
-        $playerDetails = new Player($idPlayer, $name, $country, $nbrRecords, $nbrCollabs, $firstYearRecord, $lastTracks);
+        $playerDetails = new Player($idPlayer, $name, $country, $nbrRecords, $nbrCollabs, $firstRecordYear, $lastTracks);
 
         return $playerDetails;
     }
