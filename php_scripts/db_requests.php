@@ -272,6 +272,26 @@ class DatabaseRequests
         }
     }
 
+    // Add win to win history
+    public function addWinToHistory(int $nbrTries){
+        $query = "INSERT INTO game_win_history(id_game, nbr_tries, win_date)
+                    VALUES(
+                        (
+                        SELECT
+                            gd.id_game
+                        FROM
+                            `game_details` gd
+                        JOIN game_status gs ON
+                            gd.id_status = gs.id_status
+                        WHERE
+                            gs.name = 'current'
+                    ),
+                    ?,
+                    NOW());";
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute([$nbrTries]);
+    }
+
 
 
 

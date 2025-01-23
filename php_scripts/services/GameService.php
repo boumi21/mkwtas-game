@@ -74,6 +74,13 @@ class GameService
         $this->insertNextGames($idPlayersForNextGames);
     }
 
+    /**
+     * Add win to win history
+     * @param int $nbrTries : number of tries to find the correct answer
+     */
+    public function addWinToHistory(int $nbrTries){
+        $this->dbRequester->addWinToHistory($nbrTries);
+    }
 
     /*
         Methods if we store players details in game_details table

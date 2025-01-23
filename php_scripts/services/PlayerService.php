@@ -96,6 +96,8 @@ class PlayerService
      */
     public function comparePlayers(int $idGuessedPlayer, int $idCurrentPlayer)
     {
+        //TODO : Verify if players have at least one record
+
         $guessedPlayer = $this->getPlayerInfos($idGuessedPlayer);
         $currentPlayer = $this->getPlayerInfos($idCurrentPlayer);
 

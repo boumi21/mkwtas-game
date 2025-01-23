@@ -5,9 +5,10 @@
     --bs-primary: #1f2e59;
     --bs-secondary: #c72b66;
     --bs-info: #2973f9;
-    --bs-success: #0b9757;
+    --bs-success: #1ca567;
     --bs-warning: #dec80d;
-    --bs-danger: #eb1905;
+    --bs-danger: #c74e43;
+    --bs-black: #000000;
 }
 
 /* Background color utilities */
@@ -20,6 +21,11 @@
 .bg-dark {
     background-color: var(--bs-dark) !important;
 }
+.bg-black {
+    background-color: var(--bs-black) !important;
+}
+
+
 .bg-primary {
     background-color: var(--bs-primary) !important;
 }
@@ -37,6 +43,9 @@
 }
 .bg-danger {
     background-color: var(--bs-danger) !important;
+}
+.bg-black {
+    background-color: var(--bs-black) !important;
 }
 
 /* Border color utilities */
@@ -67,6 +76,9 @@
 .border-danger {
     border-color: var(--bs-danger) !important;
 }
+.border-black {
+    border-color: var(--bs-black) !important;
+}
 
 /* Text color utilities */
 .text-light {
@@ -95,6 +107,9 @@
 }
 .text-danger {
     color: var(--bs-danger) !important;
+}
+.text-black {
+    color: var(--bs-black) !important;
 }
 
 /* Button color utilities */
@@ -134,6 +149,10 @@
     background-color: var(--bs-danger);
     color: var(--bs-white);
 }
+.btn-black {
+    background-color: var(--bs-black);
+    color: var(--bs-white);
+}
 
 /* Link color utilities */
 a.link-light {
@@ -162,6 +181,9 @@ a.link-warning {
 }
 a.link-danger {
     color: var(--bs-danger);
+}
+a.link-black {
+    color: var(--bs-black);
 }
 
 /* Table color utilities */
@@ -201,6 +223,10 @@ a.link-danger {
     background-color: var(--bs-danger);
     color: var(--bs-white);
 }
+.table-black {
+    background-color: var(--bs-black);
+    color: var(--bs-white);
+}
 
 /* Badge color utilities */
 .badge-light {
@@ -237,5 +263,9 @@ a.link-danger {
 }
 .badge-danger {
     background-color: var(--bs-danger);
+    color: var(--bs-white);
+}
+.badge-black {
+    background-color: var(--bs-black);
     color: var(--bs-white);
 }
