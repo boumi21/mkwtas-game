@@ -82,6 +82,16 @@ class GameService
         $this->dbRequester->addWinToHistory($nbrTries);
     }
 
+    // Get number of correct guesses for current game
+    public function getNbrCorrectGuesses(){
+        return $this->dbRequester->getNbrCorrectGuessesFromCurrentGame();
+    }
+
+    // Get updated game infos
+    public function getGameInfos(){
+        return $this->getNbrCorrectGuesses();
+    }
+
     /*
         Methods if we store players details in game_details table
     */

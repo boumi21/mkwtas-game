@@ -292,6 +292,29 @@ class DatabaseRequests
         $stmt->execute([$nbrTries]);
     }
 
+    // Number of persons that guessed the correct player
+    public function getNbrCorrectGuessesFromCurrentGame()
+    {
+        $query = "SELECT
+                        id_game, COUNT(*) AS 'nbr_correct_guesses'
+                    FROM
+                        game_win_history
+                    WHERE
+                        id_game =(
+                        SELECT
+                            gd.id_game
+                        FROM
+                            `game_details` gd
+                        JOIN game_status gs ON
+                            gd.id_status = gs.id_status
+                        WHERE
+                            gs.name = 'current'
+                    );";
+        $stmt = $this->bdd->prepare($query);
+        $stmt->execute();
+        return $stmt->fetch();
+    }
+
 
 
 

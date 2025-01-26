@@ -2,32 +2,32 @@
 require 'php_includes/head.php';
 require 'php_includes/db_connect.php';
 require_once 'php_scripts/db_requests.php';
+include 'php_includes/modals/rules.php';
 
 $dbRequester = new DatabaseRequests($bdd);
 ?>
 
-<header>
-    <!-- place navbar here -->
-</header>
-
 <body class="bg-light">
+
+    <div class="container">
+        <header class="d-flex flex-wrap justify-content-end py-3 mb-4 border-bottom">
+
+            <ul class="nav">
+                <li class="ms-3"><a href="#" data-bs-toggle="modal" data-bs-target="#rulesModal"><img style="height: 2.7em;" src="assets/img/question-circle.svg" alt="Help" title="How to play"></a>
+
+                </li>
+                <li class="ms-3"><a href="#">
+                        <img src="assets/img/github.png" style="height: 2.5em" alt="github logo" title="Source code"></a></li>
+                <li class="ms-3">
+                    <a href="https://mkwtas.com">
+                        <img style="height: 2.7em;" src="assets/img/mkwtas.png" alt="mkwtas logo" title="mkwtas website">
+                    </a>
+                </li>
+            </ul>
+        </header>
+    </div>
+
     <main>
-
-
-
-        <button class="btn btn-primary d-md-none" x-on:click="showContainer = !showContainer">Toggle Container</button>
-
-        <div class="sticky-top d-md-block col-md-2" x-show="showContainer">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title">Sticky Container</h5>
-                    <button type="button" class="btn-close" x-on:click="showContainer = false"></button>
-                </div>
-                <div class="card-body">
-                    <!-- Content for the container -->
-                </div>
-            </div>
-        </div>
 
 
 
@@ -44,7 +44,8 @@ $dbRequester = new DatabaseRequests($bdd);
                             <select
                                 id="select"
                                 placeholder="Select a person..."
-                                x-on:change="guessName"
+                                x-on:change="guessName(); updatePageInfos()"
+                                x-init="() => { updatePageInfos() }"
                                 x-model="formData.idPlayer"
                                 required>
                                 <option value="">Select a person...</option>
@@ -59,6 +60,13 @@ $dbRequester = new DatabaseRequests($bdd);
                     </form>
                 </div>
             </div>
+            <div class="row mb-2">
+                <div class="col-md-6 mx-auto text-center">
+                    <span x-text="nbrGameCorrectGuesses" class="fw-bold"></span> persons have guessed the TASer #<span x-text="idGame" class="fw-bold"></span>
+
+                </div>
+
+            </div>
 
 
 
@@ -66,13 +74,10 @@ $dbRequester = new DatabaseRequests($bdd);
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-4">
-                            <label for="displayName" class="form-label">Name</label>
+                            <span class="fs-3" x-text="correctPlayer.name"></span>
                             <input
-                                type="text"
-                                x-model="correctPlayer.name"
-                                class="form-control"
-                                :class="correctPlayer.name ? 'bg-success' : 'bg-black'"
-                                id="displayName"
+                                class="form-control bg-black"
+                                x-show="correctPlayer.name === ''"
                                 disabled
                                 readonly>
                         </div>
@@ -82,7 +87,7 @@ $dbRequester = new DatabaseRequests($bdd);
                     <div class="row g-4">
                         <div class="col-md-8">
                             <div class="row g-3">
-                                <div class="col-md-6 order-md-1">
+                                <div class="col-6 order-1">
                                     <label for="displayCountry" class="form-label">Country</label>
                                     <input
                                         type="text"
@@ -93,7 +98,7 @@ $dbRequester = new DatabaseRequests($bdd);
                                         disabled
                                         readonly>
                                 </div>
-                                <div class="col-md-6 order-md-3">
+                                <div class="col-6 order-3">
                                     <label for="displayFirstYear" class="form-label">First TAS year</label>
                                     <input
                                         type="text"
@@ -104,7 +109,7 @@ $dbRequester = new DatabaseRequests($bdd);
                                         disabled
                                         readonly>
                                 </div>
-                                <div class="col-md-6 order-md-2">
+                                <div class="col-6 order-2">
                                     <label for="displayNbrTas" class="form-label"># of TAS</label>
                                     <input
                                         type="text"
@@ -115,7 +120,7 @@ $dbRequester = new DatabaseRequests($bdd);
                                         disabled
                                         readonly>
                                 </div>
-                                <div class="col-md-6 order-md-4">
+                                <div class="col-6 order-4">
                                     <label for="displayNbrCollabs" class="form-label"># of collabs</label>
                                     <input
                                         type="text"
@@ -161,19 +166,23 @@ $dbRequester = new DatabaseRequests($bdd);
 
             <hr>
             <div class="d-flex flex-column-reverse">
-                <template x-for="player in guessedPlayers">
-                    <div class="card bg-white mb-3">
+                <template x-for="(player, index) in guessedPlayers">
+                    <div
+                        class="card bg-white mb-3"
+                        x-data="{ show: false }"
+                        x-init="$nextTick(() => { show = true })"
+                        x-show="show"
+                        x-transition.duration.500ms>
                         <div class="card-header">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label for="displayName" class="form-label">Name</label>
-                                    <input
-                                        type="text"
-                                        x-model="player.name.value"
-                                        class="form-control fw-bold"
-                                        disabled
-                                        readonly>
+                                    <span class="fs-3" x-text="player.name.value"></span>
                                 </div>
+                                <div class="col d-flex justify-content-end align-items-center">
+                                    <span x-text="'#' + (index + 1)"></span>
+
+                                </div>
+
                             </div>
                         </div>
                         <div class="card-body">
@@ -270,10 +279,6 @@ $dbRequester = new DatabaseRequests($bdd);
 
 
     </main>
-    <footer>
-        yooooo
-        <!-- place footer here -->
-    </footer>
 </body>
 
 
@@ -289,7 +294,6 @@ $dbRequester = new DatabaseRequests($bdd);
             formData: {
                 idPlayer: ''
             },
-            showContainer: false,
             correctPlayer: {
                 name: "",
                 country: "",
@@ -299,6 +303,8 @@ $dbRequester = new DatabaseRequests($bdd);
                 lastTracks: [null, null, null]
             },
             guessedPlayers: [],
+            idGame: "",
+            nbrGameCorrectGuesses: "",
             async guessName() {
                 var guessedPlayerResult = await fetch('php_scripts/guess.php', {
                         method: 'POST',
@@ -348,6 +354,26 @@ $dbRequester = new DatabaseRequests($bdd);
                         this.correctPlayer[guessProperty] = guess.value;
                     }
                 }
+            },
+            async updatePageInfos() {
+                var pageInfos = await fetch('php_scripts/updatePageInfos.php')
+                    .then(function(response) {
+                        if (!response.ok) {
+                            return response.json().then(error => {
+                                throw new Error(error.error);
+                            });
+                        }
+                        return response.json();
+                    })
+                    .then(function(pageInfos) {
+                        return pageInfos;
+                    })
+                    .catch((e) => {
+                        console.error('er : ', e);
+                    })
+                this.idGame = pageInfos.id_game;
+                this.nbrGameCorrectGuesses = pageInfos.nbr_correct_guesses;
+
             }
         }
     }

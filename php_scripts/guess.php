@@ -20,10 +20,12 @@ if (isset($guessData)) {
     //2. get player to guess details (check if id_player exists)
     //$currentPlayer = $playerService->getPlayerInfos($gameService->getCurrentGame()['id_player']);
     //3. compare the two
+
+    $idPlayerCurrentGame = $gameService->getCurrentGame()['id_player'];
     
-    $compare = $playerService->comparePlayers($guessData->idGuessedPlayer, $gameService->getCurrentGame()['id_player']);
+    $compare = $playerService->comparePlayers($guessData->idGuessedPlayer, $idPlayerCurrentGame);
     // If the guess is correct
-    if ($guessData->idGuessedPlayer == $gameService->getCurrentGame()['id_player']) {
+    if ($guessData->idGuessedPlayer == $idPlayerCurrentGame) {
         // We add it to win history
         $gameService->addWinToHistory($guessData->nbrTries);
     }

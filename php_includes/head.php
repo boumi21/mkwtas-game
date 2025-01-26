@@ -24,6 +24,7 @@
         <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
 
         <!-- Custom CSS -->
+        <link rel="stylesheet" href="css/colors.css" />
         <link rel="stylesheet" href="css/site.css" />
     </head>
 
