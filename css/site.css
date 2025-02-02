@@ -10,3 +10,5 @@
     -webkit-transform: scale(1.3);
     transform: scale(1.3);
 }
+
+[x-cloak] { display: none !important; }

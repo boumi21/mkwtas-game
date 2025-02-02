@@ -8,8 +8,5 @@ $gameService = new GameService($bdd);
 
 //$guessData = json_decode(file_get_contents("php://input"));
 
-
-
 $pageInfos = $gameService->getGameInfos();
-
 echo json_encode($pageInfos);

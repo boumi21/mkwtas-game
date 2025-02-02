@@ -21,6 +21,13 @@ if (isset($guessData)) {
     //$currentPlayer = $playerService->getPlayerInfos($gameService->getCurrentGame()['id_player']);
     //3. compare the two
 
+    if (isset($guessData->idGame) && $guessData->idGame != "") {
+        if ($guessData->idGame != $gameService->getCurrentGame()['id_game']) {
+            http_response_code(205);
+            return;
+        }
+    }
+
     $idPlayerCurrentGame = $gameService->getCurrentGame()['id_player'];
     
     $compare = $playerService->comparePlayers($guessData->idGuessedPlayer, $idPlayerCurrentGame);

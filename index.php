@@ -44,7 +44,7 @@ $dbRequester = new DatabaseRequests($bdd);
                             <select
                                 id="select"
                                 placeholder="Select a person..."
-                                x-on:change="guessName(); updatePageInfos()"
+                                x-on:change="guessName();"
                                 x-init="() => { updatePageInfos() }"
                                 x-model="formData.idPlayer"
                                 required>
@@ -60,6 +60,14 @@ $dbRequester = new DatabaseRequests($bdd);
                     </form>
                 </div>
             </div>
+
+
+            <div class="row mb-2" x-cloak x-show="timeOut" x-transition>
+                <h2 class="col-md-6 mx-auto text-center">
+                    Time is up! New TASer to guess 🕵
+                </h2>
+            </div>
+
             <div class="row mb-2">
                 <div class="col-md-6 mx-auto text-center">
                     <span x-text="nbrGameCorrectGuesses" class="fw-bold"></span> persons have guessed the TASer #<span x-text="idGame" class="fw-bold"></span>
@@ -294,15 +302,16 @@ $dbRequester = new DatabaseRequests($bdd);
             formData: {
                 idPlayer: ''
             },
-            correctPlayer: {
+            correctPlayer: Alpine.$persist({
                 name: "",
                 country: "",
                 nbrRecords: "",
                 nbrCollabs: "",
                 firstRecordYear: "",
                 lastTracks: [null, null, null]
-            },
-            guessedPlayers: [],
+            }),
+            guessedPlayers: Alpine.$persist([]),
+            timeOut: false,
             idGame: "",
             nbrGameCorrectGuesses: "",
             async guessName() {
@@ -313,7 +322,8 @@ $dbRequester = new DatabaseRequests($bdd);
                         },
                         body: JSON.stringify({
                             idGuessedPlayer: this.formData.idPlayer,
-                            nbrTries: this.guessedPlayers.length + 1
+                            nbrTries: this.guessedPlayers.length + 1,
+                            idGame: this.idGame
                         })
                     })
                     .then(function(response) {
@@ -321,6 +331,15 @@ $dbRequester = new DatabaseRequests($bdd);
                             return response.json().then(error => {
                                 throw new Error(error.error);
                             });
+                        }
+                        if (response.status == 205) {
+                            localStorage.removeItem("_x_correctPlayer");
+                            localStorage.removeItem("_x_guessedPlayers");
+                            setTimeout(function() {
+                                window.location.reload();
+                            }, 2000);
+
+                            return;
                         }
                         return response.json();
                     })
@@ -330,9 +349,13 @@ $dbRequester = new DatabaseRequests($bdd);
                     .catch((e) => {
                         console.error('er : ', e);
                     })
-
+                if (guessedPlayerResult == undefined) {
+                    this.timeOut = true;
+                    return;
+                }
                 this.guessedPlayers.push(guessedPlayerResult.guessedPlayer);
                 this.analyzeGuess(guessedPlayerResult.guessedPlayer);
+                this.updatePageInfos();
             },
             analyzeGuess(guessedPlayer) {
                 var guessedPlayerProperties = Object.keys(guessedPlayer);
@@ -373,7 +396,6 @@ $dbRequester = new DatabaseRequests($bdd);
                     })
                 this.idGame = pageInfos.id_game;
                 this.nbrGameCorrectGuesses = pageInfos.nbr_correct_guesses;
-
             }
         }
     }
