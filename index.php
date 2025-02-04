@@ -39,7 +39,7 @@ $dbRequester = new DatabaseRequests($bdd);
             <img src="assets/img/logo.png" alt="logo" class="img-fluid w-50 mx-auto d-block" />
             <div class="row mb-3">
                 <div class="col-md-6 mx-auto">
-                    <form @submit.prevent="guessName">
+                    <form @submit.prevent="guessName" x-show="correctPlayer.name === ''">
                         <div class="input-group">
                             <select
                                 id="select"
@@ -58,8 +58,13 @@ $dbRequester = new DatabaseRequests($bdd);
                             <!-- <button class="btn btn-outline-secondary" type="submit">Button</button> -->
                         </div>
                     </form>
+                    <p x-show="correctPlayer.name" class="fw-bold text-center"><a @click="showWinModal" href="#" class="text-success text-decoration-none">Well done. Come back tomorrow for a new challenge!</a></p>
                 </div>
             </div>
+
+            <?php
+            include 'php_includes/modals/win.php';
+            ?>
 
 
             <div class="row mb-2" x-cloak x-show="timeOut" x-transition>
@@ -76,13 +81,13 @@ $dbRequester = new DatabaseRequests($bdd);
 
             </div>
 
-
-
-            <div id="player-to-guess" class="bg-white card">
+            <div id="player-to-guess" class="bg-white card border-primary">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-4">
-                            <span class="fs-3" x-text="correctPlayer.name"></span>
+                            <a :href="'http://localhost/mkwtas-website/player.php?name=' + correctPlayer.name.replace(/ /g,'_')" target="_blank">
+                                <span class="fs-3 fw-bold" x-text="correctPlayer.name"></span>
+                            </a>
                             <input
                                 class="form-control bg-black"
                                 x-show="correctPlayer.name === ''"
@@ -173,6 +178,7 @@ $dbRequester = new DatabaseRequests($bdd);
             </div>
 
             <hr>
+            
             <div class="d-flex flex-column-reverse">
                 <template x-for="(player, index) in guessedPlayers">
                     <div
@@ -312,7 +318,7 @@ $dbRequester = new DatabaseRequests($bdd);
             }),
             guessedPlayers: Alpine.$persist([]),
             timeOut: false,
-            idGame: "",
+            idGame: Alpine.$persist(""),
             nbrGameCorrectGuesses: "",
             async guessName() {
                 var guessedPlayerResult = await fetch('php_scripts/guess.php', {
@@ -333,13 +339,7 @@ $dbRequester = new DatabaseRequests($bdd);
                             });
                         }
                         if (response.status == 205) {
-                            localStorage.removeItem("_x_correctPlayer");
-                            localStorage.removeItem("_x_guessedPlayers");
-                            setTimeout(function() {
-                                window.location.reload();
-                            }, 2000);
-
-                            return;
+                            return "timeout";
                         }
                         return response.json();
                     })
@@ -349,8 +349,8 @@ $dbRequester = new DatabaseRequests($bdd);
                     .catch((e) => {
                         console.error('er : ', e);
                     })
-                if (guessedPlayerResult == undefined) {
-                    this.timeOut = true;
+                if (guessedPlayerResult == "timeout") {
+                    this.resetGame();
                     return;
                 }
                 this.guessedPlayers.push(guessedPlayerResult.guessedPlayer);
@@ -363,6 +363,11 @@ $dbRequester = new DatabaseRequests($bdd);
                 guessedPlayerProperties.forEach(property => {
                     this.updateCorrectPlayer(property, guessedPlayer[property]);
                 });
+
+                // If win
+                if (guessedPlayer.name.status == guessStatus.correct) {
+                    this.showWinModal();
+                }
 
             },
             updateCorrectPlayer(guessProperty, guess) {
@@ -394,8 +399,40 @@ $dbRequester = new DatabaseRequests($bdd);
                     .catch((e) => {
                         console.error('er : ', e);
                     })
+                if (this.idGame && this.idGame != pageInfos.id_game) {
+                    this.resetGame();
+                }
                 this.idGame = pageInfos.id_game;
                 this.nbrGameCorrectGuesses = pageInfos.nbr_correct_guesses;
+            },
+            async shareWin(el) {
+                var text = "I guessed the TASer of the day #" + this.idGame + " in " + this.guessedPlayers.length + " " + (this.guessedPlayers.length > 1 ? 'tries' : 'try') + "! \nCan you do better? \n\nhttps://play.mkwtas.com";
+                try {
+                    await navigator.clipboard.writeText(text);
+                    el.innerHTML = "Copied!";
+                    el.classList.remove("btn-info");
+                    el.classList.add("btn-success");
+                    setTimeout(() => {
+                        el.innerHTML = "Share my result 📋";
+                        el.classList.remove("btn-success");
+                        el.classList.add("btn-info");
+                    }, 2000);
+                } catch (error) {
+                    console.error(error.message);
+                }
+            },
+            showWinModal() {
+                const winModal = new bootstrap.Modal(document.getElementById('winModal'));
+                winModal.show();
+            },
+            resetGame() {
+                this.timeOut = true;
+                localStorage.removeItem("_x_correctPlayer");
+                localStorage.removeItem("_x_guessedPlayers");
+                localStorage.removeItem("_x_idGame");
+                setTimeout(function() {
+                    window.location.reload();
+                }, 2000);
             }
         }
     }
