@@ -34,7 +34,7 @@ function getCodeToCountryArray(){
  */
 function getCountryNameFromCode($countryCode){
     foreach (getCodeToCountryArray() as $key => $value) {
-        if (strtoupper($key) == strtoupper($countryCode)) {
+        if ($key == $countryCode) {
             return $value;
         }
     }

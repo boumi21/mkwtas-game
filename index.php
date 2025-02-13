@@ -40,15 +40,15 @@ $dbRequester = new DatabaseRequests($bdd);
             <div class="row mb-3">
                 <div class="col-md-6 mx-auto">
                     <form @submit.prevent="guessName" x-show="correctPlayer.name === ''">
-                        <div class="input-group">
+                        <div class="input-group-lg">
                             <select
                                 id="select"
-                                placeholder="Select a person..."
+                                placeholder="Select a TASer..."
                                 x-on:change="guessName();"
                                 x-init="() => { updatePageInfos() }"
                                 x-model="formData.idPlayer"
                                 required>
-                                <option value="">Select a person...</option>
+                                <option value="">Select a TASer...</option>
                                 <?php
                                 foreach ($players as $player) {
                                     echo '<option value="' . $player['id_player'] . '">' . $player['name_player'] . '</option>';
@@ -81,7 +81,7 @@ $dbRequester = new DatabaseRequests($bdd);
 
             </div>
 
-            <div id="player-to-guess" class="bg-white card border-primary">
+            <div id="player-to-guess" class="bg-white card">
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-4">

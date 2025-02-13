@@ -21,7 +21,7 @@ class DatabaseRequests
     // Get all players
     public function getAllPlayers()
     {
-        $query = "SELECT id_player, name_player, LOWER(country) FROM player ORDER BY name_player";
+        $query = "SELECT * FROM player ORDER BY name_player";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -30,7 +30,7 @@ class DatabaseRequests
     // Get specific players
     public function getPlayer(int $idPlayer)
     {
-        $query = "SELECT id_player, name_player, LOWER(country) AS 'country' FROM player WHERE id_player = ?";
+        $query = "SELECT * FROM player WHERE id_player = ?";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute([$idPlayer]);
         return $stmt->fetch();
@@ -39,7 +39,7 @@ class DatabaseRequests
     // Get player country
     public function getPlayerCountry(int $idPlayer)
     {
-        $query = "SELECT LOWER(country) AS 'country' FROM player WHERE id_player = ?";
+        $query = "SELECT country AS 'country' FROM player WHERE id_player = ?";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute([$idPlayer]);
         return $stmt->fetchColumn();
