@@ -1,3 +1,6 @@
+// JS utils functions, constants etc
+
+
 const guessStatus = Object.freeze({"correct":1, "incorrect":2, "present":3, "less":4, "more":5});
 
 const guessStatusBackground = Object.freeze({1:"bg-success", 2:"bg-danger", 3:"bg-warning", 4:"bg-danger", 5:"bg-danger"});

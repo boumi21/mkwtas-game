@@ -1,3 +1,6 @@
+<!-- Modal that congratulates the user when he guesses the correct TASer -->
+
+
 <div class="modal fade" id="winModal" tabindex="-1" aria-labelledby="winModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">

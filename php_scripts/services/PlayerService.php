@@ -74,16 +74,15 @@ class PlayerService
         $playerLight = $this->getPlayerFromDb($idPlayer);
         $playerIdsRecords = $this->getPlayerIdsRecords($idPlayer);
 
-        $name = $playerLight['name_player'];
-        $country = $playerLight['country'];
-        $nbrRecords = count($playerIdsRecords);
-        $nbrCollabs = $this->getNbrCollabsFromRecords($playerIdsRecords);
-        $firstRecordYear = $this->getPlayerFirstRecordYear($idPlayer);
-        $lastTracks = $this->getPlayerLastTracks($idPlayer);
-
-        $playerDetails = new Player($idPlayer, $name, $country, $nbrRecords, $nbrCollabs, $firstRecordYear, $lastTracks);
-
-        return $playerDetails;
+        return new Player(
+            $idPlayer,
+            $playerLight['name_player'],
+            $playerLight['country'],
+            count($playerIdsRecords),
+            $this->getNbrCollabsFromRecords($playerIdsRecords),
+            $this->getPlayerFirstRecordYear($idPlayer),
+            $this->getPlayerLastTracks($idPlayer)
+        );
     }
 
     

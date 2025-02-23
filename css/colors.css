@@ -1,3 +1,5 @@
+/* Bootstrap utilities overwrite with custom colors */
+
 :root {
     --bs-light: #e2e6e7;
     --bs-white: #ffffff;

@@ -1,3 +1,5 @@
+<!-- Modal that describes how to play the game -->
+
 <div class="modal fade" id="rulesModal" tabindex="-1" aria-labelledby="rulesModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">

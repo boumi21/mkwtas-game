@@ -54,30 +54,7 @@ class GameService
         $this->dbRequester->goNextGame($idNextGame);
     }
 
-    // Create a new draw (when no future game is available)
-    public function newDraw(){
-        // Get all players ID
-        $allPlayersArray = $this->dbRequester->getAllPlayers();
-        $idAllPlayersArray = array_column($allPlayersArray, 'id_player');
-
-        // Get players ID from last draw
-        $idLastDrawPlayers = $this->getLastDrawPlayers();
-
-        // Get players ID not in previous draw
-        $idPlayersNotInPreviousDraw = array_diff($idAllPlayersArray, $idLastDrawPlayers);
-
-        // Select X random players ID that are not in the previous draw (X = NBR_PLAYERS_DRAW or the maximum if there are less players available)
-        shuffle($idPlayersNotInPreviousDraw);
-        $idPlayersForNextGames = array_slice($idPlayersNotInPreviousDraw, 0, NBR_PLAYERS_DRAW > count($idPlayersNotInPreviousDraw) ? count($idPlayersNotInPreviousDraw) : NBR_PLAYERS_DRAW);
-        
-        // Insert new draw
-        $this->insertNextGames($idPlayersForNextGames);
-    }
-
-    /**
-     * Add win to win history
-     * @param int $nbrTries : number of tries to find the correct answer
-     */
+    // Add win to win history
     public function addWinToHistory(int $nbrTries){
         $this->dbRequester->addWinToHistory($nbrTries);
     }
@@ -92,12 +69,26 @@ class GameService
         return $this->getNbrCorrectGuesses();
     }
 
-    /*
-        Methods if we store players details in game_details table
-    */
-    public function insertNextPlayerDetails(string $name, string $country, int $nbrRecords, int $nbrCollabs, int $firstRecordYear, string $lastTracks){
-        $this->dbRequester->insertNextPlayerDetails($name, $country, $nbrRecords, $nbrCollabs, $firstRecordYear, $lastTracks);
-    }
+    // Create a new draw (when no future game is available)
+    public function newDraw(){
+        // Get all players ID
+        $allPlayersArray = $this->dbRequester->getAllPlayers();
+        $idAllPlayersArray = array_column($allPlayersArray, 'id_player');
 
+        // Get players ID from last draw
+        $idLastDrawPlayers = $this->getLastDrawPlayers();
+
+        // Get players ID not in previous draw
+        $idPlayersNotInPreviousDraw = array_diff($idAllPlayersArray, $idLastDrawPlayers);
+        // Get max number of players for the next draw
+        $maxPlayers = min(NBR_PLAYERS_DRAW, count($idPlayersNotInPreviousDraw));
+
+        // Select X random players ID that are not in the previous draw
+        shuffle($idPlayersNotInPreviousDraw);
+        $idPlayersForNextGames = array_slice($idPlayersNotInPreviousDraw, 0, $maxPlayers);
+
+        // Insert new draw
+        $this->insertNextGames($idPlayersForNextGames);
+    }
 
 }

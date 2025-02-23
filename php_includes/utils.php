@@ -1,7 +1,7 @@
 <?php
 
 // Number of players per draw
-define('NBR_PLAYERS_DRAW', 10);
+const NBR_PLAYERS_DRAW = 10;
 
 
 enum GameStatus: int
