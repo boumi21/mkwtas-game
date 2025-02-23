@@ -1,6 +1,6 @@
 <?php
 
-require_once 'db_requests.php';
+require_once dirname(__DIR__, 1) . '/db_requests.php';
 
 class GameService
 {

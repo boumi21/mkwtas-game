@@ -1,9 +1,9 @@
 <?php
 
-require_once 'db_requests.php';
-require_once 'dto/Player.php';
-require_once '../php_includes/utils.php';
-require_once 'TrackService.php';
+require_once dirname(__DIR__, 1) . '/db_requests.php';
+require_once dirname(__DIR__, 1) . '/dto/Player.php';
+require_once dirname(__DIR__, 2) . '/php_includes/utils.php';
+require_once __DIR__ . '/TrackService.php';
 
 class PlayerService
 {

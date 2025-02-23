@@ -2,7 +2,7 @@
 
 // All Database requests
 
-require_once __DIR__ . '/../php_includes/utils.php';
+require_once dirname(__DIR__, 1) . '/php_includes/utils.php';
 
 class DatabaseRequests
 {

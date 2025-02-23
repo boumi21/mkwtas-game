@@ -2,9 +2,9 @@
 
 // File called via a cron job every day
 
-require '../php_includes/db_connect.php';
-require_once '../php_scripts/services/GameService.php';
-require_once '../php_includes/utils.php';
+require dirname(__DIR__, 2) . '/php_includes/db_connect.php';
+require_once dirname(__DIR__, 1) . '/services/GameService.php';
+require_once dirname(__DIR__, 2) . '/php_includes/utils.php';
 
 
 /**
@@ -103,6 +103,8 @@ class GameUpdateHandler
 
 
 // Execute the update
+
+echo("CRON executed successfully"); // Output to the cron job log
 try {
     $gameUpdateHandler = new GameUpdateHandler($bdd);
     $gameUpdateHandler->update();

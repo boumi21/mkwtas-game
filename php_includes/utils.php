@@ -1,7 +1,9 @@
 <?php
 
+$gameConfig = parse_ini_file(dirname(__DIR__, 1) . '/settings/config.ini', true)['game'];
+
 // Number of players per draw
-const NBR_PLAYERS_DRAW = 10;
+define('NBR_PLAYERS_DRAW', $gameConfig['nbr_players_draw']);
 
 
 enum GameStatus: int
@@ -34,7 +36,7 @@ const ERROR_MESSAGES = [
  * Returns the json file with country codes to their names as an array
  */
 function getCodeToCountryArray(){
-    $json = file_get_contents(__DIR__ . '/../assets/countries.json');
+    $json = file_get_contents(dirname(__DIR__, 1) . '/assets/countries.json');
     return json_decode($json);
 }
 

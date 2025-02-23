@@ -1,0 +1,12 @@
+# Prevent any direct access to files in this folder except for specific IP
+Order Deny,Allow
+Deny from all
+
+# Allow only specific IP for cron_update.php
+# Uncomment the line and add your IPV6
+<Files "cron_update.php">
+    # Allow from xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx
+</Files>
+
+# Allow localhost access for testing
+Allow from 127.0.0.1

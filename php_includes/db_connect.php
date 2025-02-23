@@ -2,7 +2,7 @@
 
 // Connection to database
 
-$dbconfig = parse_ini_file(__DIR__ . '/../settings/config.ini', true)['database'];
+$dbconfig = parse_ini_file(dirname(__DIR__, 1) . '/settings/config.ini', true)['database'];
 
 $dsn = "mysql:host=" . $dbconfig['host'] . ";dbname=" . $dbconfig['dbname'] . ";charset=utf8";
 $options = [

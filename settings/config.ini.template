@@ -8,3 +8,6 @@ host = "localhost"
 dbname = "db_mkwtas"
 user = "root"
 password = ""
+
+[game]
+nbr_players_draw = 10

@@ -303,7 +303,7 @@ $dbRequester = new DatabaseRequests($bdd);
 <!-- JS scripts imports -->
 <script src="js/utils/EnumGuessStatus.js"></script>
 <script src="js/TomSelect.js"></script>
-<script src="js/gameApp.js"></script>
+<script src="js/GameApp.js"></script>
 
 <?php
 require 'php_includes/footer.php';
