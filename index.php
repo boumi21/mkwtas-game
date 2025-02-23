@@ -3,12 +3,15 @@ require 'php_includes/head.php';
 require 'php_includes/db_connect.php';
 require_once 'php_scripts/db_requests.php';
 include 'php_includes/modals/rules.php';
+include 'php_includes/modals/win.php';
 
 $dbRequester = new DatabaseRequests($bdd);
 ?>
 
 <body class="bg-light">
 
+
+    <!-- Navigation menu -->
     <div class="container">
         <header class="d-flex flex-wrap justify-content-end py-3 mb-4 border-bottom">
 
@@ -27,16 +30,14 @@ $dbRequester = new DatabaseRequests($bdd);
         </header>
     </div>
 
+
+
+    <!-- Main content -->
     <main>
-
-
-
-        <?php
-        $players = $dbRequester->getAllPlayers();
-        ?>
-
         <div class="container" x-data="gameApp()">
             <img src="assets/img/logo.png" alt="logo" class="img-fluid w-50 mx-auto d-block" />
+
+            <!-- Guess form dropdown with TomSelect -->
             <div class="row mb-3">
                 <div class="col-md-6 mx-auto">
                     <form @submit.prevent="guessName" x-show="correctPlayer.name === ''">
@@ -50,37 +51,36 @@ $dbRequester = new DatabaseRequests($bdd);
                                 required>
                                 <option value="">Select a TASer...</option>
                                 <?php
+                                $players = $dbRequester->getAllPlayers();
                                 foreach ($players as $player) {
                                     echo '<option value="' . $player['id_player'] . '">' . $player['name_player'] . '</option>';
                                 }
                                 ?>
                             </select>
-                            <!-- <button class="btn btn-outline-secondary" type="submit">Button</button> -->
                         </div>
                     </form>
                     <p x-show="correctPlayer.name" class="fw-bold text-center"><a @click="showWinModal" href="#" class="text-success text-decoration-none">Well done. Come back tomorrow for a new challenge!</a></p>
                 </div>
             </div>
 
-            <?php
-            include 'php_includes/modals/win.php';
-            ?>
 
-
+            <!-- div to show only before switching to a new game -->
             <div class="row mb-2" x-cloak x-show="timeOut" x-transition>
                 <h2 class="col-md-6 mx-auto text-center">
                     Time is up! New TASer to guess 🕵
                 </h2>
             </div>
 
+            <!-- div that shows number of correct guesses for current game -->
             <div class="row mb-2">
                 <div class="col-md-6 mx-auto text-center">
                     <span x-text="nbrGameCorrectGuesses" class="fw-bold"></span> persons have guessed the TASer #<span x-text="idGame" class="fw-bold"></span>
 
                 </div>
-
             </div>
 
+
+            <!-- Card for the current player to guess -->
             <div id="player-to-guess" class="bg-white card">
                 <div class="card-header">
                     <div class="row">
@@ -177,8 +177,12 @@ $dbRequester = new DatabaseRequests($bdd);
                 </div>
             </div>
 
+
+
             <hr>
-            
+
+
+            <!-- Container that adds a card every time a guess is made -->
             <div class="d-flex flex-column-reverse">
                 <template x-for="(player, index) in guessedPlayers">
                     <div
@@ -296,147 +300,10 @@ $dbRequester = new DatabaseRequests($bdd);
 </body>
 
 
+<!-- JS scripts imports -->
 <script src="js/utils/EnumGuessStatus.js"></script>
-<script>
-    var settings = {};
-    new TomSelect('#select', settings);
-
-
-
-    function gameApp() {
-        return {
-            formData: {
-                idPlayer: ''
-            },
-            correctPlayer: Alpine.$persist({
-                name: "",
-                country: "",
-                nbrRecords: "",
-                nbrCollabs: "",
-                firstRecordYear: "",
-                lastTracks: [null, null, null]
-            }),
-            guessedPlayers: Alpine.$persist([]),
-            timeOut: false,
-            idGame: Alpine.$persist(""),
-            nbrGameCorrectGuesses: "",
-            async guessName() {
-                var guessedPlayerResult = await fetch('php_scripts/guess.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            idGuessedPlayer: this.formData.idPlayer,
-                            nbrTries: this.guessedPlayers.length + 1,
-                            idGame: this.idGame
-                        })
-                    })
-                    .then(function(response) {
-                        if (!response.ok) {
-                            return response.json().then(error => {
-                                throw new Error(error.error);
-                            });
-                        }
-                        if (response.status == 205) {
-                            return "timeout";
-                        }
-                        return response.json();
-                    })
-                    .then(function(guessInfos) {
-                        return guessInfos;
-                    })
-                    .catch((e) => {
-                        console.error('er : ', e);
-                    })
-                if (guessedPlayerResult == "timeout") {
-                    this.resetGame();
-                    return;
-                }
-                this.guessedPlayers.push(guessedPlayerResult.guessedPlayer);
-                this.analyzeGuess(guessedPlayerResult.guessedPlayer);
-                this.updatePageInfos();
-            },
-            analyzeGuess(guessedPlayer) {
-                var guessedPlayerProperties = Object.keys(guessedPlayer);
-                // Update correctPlayer with guessedPlayer properties
-                guessedPlayerProperties.forEach(property => {
-                    this.updateCorrectPlayer(property, guessedPlayer[property]);
-                });
-
-                // If win
-                if (guessedPlayer.name.status == guessStatus.correct) {
-                    this.showWinModal();
-                }
-
-            },
-            updateCorrectPlayer(guessProperty, guess) {
-                if (guessProperty == 'lastTracks') {
-                    for (const [i, track] of guess.entries()) {
-                        if (track.status == guessStatus.correct) {
-                            this.correctPlayer[guessProperty].splice(i, 1, track.value);
-                        }
-                    }
-                } else {
-                    if (guess.status == guessStatus.correct) {
-                        this.correctPlayer[guessProperty] = guess.value;
-                    }
-                }
-            },
-            async updatePageInfos() {
-                var pageInfos = await fetch('php_scripts/updatePageInfos.php')
-                    .then(function(response) {
-                        if (!response.ok) {
-                            return response.json().then(error => {
-                                throw new Error(error.error);
-                            });
-                        }
-                        return response.json();
-                    })
-                    .then(function(pageInfos) {
-                        return pageInfos;
-                    })
-                    .catch((e) => {
-                        console.error('er : ', e);
-                    })
-                if (this.idGame && this.idGame != pageInfos.id_game) {
-                    this.resetGame();
-                }
-                this.idGame = pageInfos.id_game;
-                this.nbrGameCorrectGuesses = pageInfos.nbr_correct_guesses;
-            },
-            async shareWin(el) {
-                var text = "I guessed the TASer of the day #" + this.idGame + " in " + this.guessedPlayers.length + " " + (this.guessedPlayers.length > 1 ? 'tries' : 'try') + "! \nCan you do better? \n\nhttps://play.mkwtas.com";
-                try {
-                    await navigator.clipboard.writeText(text);
-                    el.innerHTML = "Copied!";
-                    el.classList.remove("btn-info");
-                    el.classList.add("btn-success");
-                    setTimeout(() => {
-                        el.innerHTML = "Share my result 📋";
-                        el.classList.remove("btn-success");
-                        el.classList.add("btn-info");
-                    }, 2000);
-                } catch (error) {
-                    console.error(error.message);
-                }
-            },
-            showWinModal() {
-                const winModal = new bootstrap.Modal(document.getElementById('winModal'));
-                winModal.show();
-            },
-            resetGame() {
-                this.timeOut = true;
-                localStorage.removeItem("_x_correctPlayer");
-                localStorage.removeItem("_x_guessedPlayers");
-                localStorage.removeItem("_x_idGame");
-                setTimeout(function() {
-                    window.location.reload();
-                }, 2000);
-            }
-        }
-    }
-</script>
+<script src="js/TomSelect.js"></script>
+<script src="js/gameApp.js"></script>
 
 <?php
 require 'php_includes/footer.php';

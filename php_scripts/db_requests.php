@@ -1,5 +1,7 @@
 <?php
 
+// All Database requests
+
 require_once __DIR__ . '/../php_includes/utils.php';
 
 class DatabaseRequests
@@ -10,10 +12,6 @@ class DatabaseRequests
     {
         $this->bdd = $bdd;
     }
-
-
-
-
 
 
     /* PLAYER REQUESTS */
@@ -273,7 +271,8 @@ class DatabaseRequests
     }
 
     // Add win to win history
-    public function addWinToHistory(int $nbrTries){
+    public function addWinToHistory(int $nbrTries)
+    {
         $query = "INSERT INTO game_win_history(id_game, nbr_tries, win_date)
                     VALUES(
                         (
@@ -296,46 +295,19 @@ class DatabaseRequests
     public function getNbrCorrectGuessesFromCurrentGame()
     {
         $query = "SELECT
-                        id_game, COUNT(*) AS 'nbr_correct_guesses'
-                    FROM
-                        game_win_history
-                    WHERE
-                        id_game =(
-                        SELECT
-                            gd.id_game
-                        FROM
-                            `game_details` gd
-                        JOIN game_status gs ON
-                            gd.id_status = gs.id_status
-                        WHERE
-                            gs.name = 'current'
-                    );";
+                    gd.id_game,
+                    COALESCE(COUNT(gwh.id_game),
+                    0) AS 'nbr_correct_guesses'
+                FROM
+                    game_details gd
+                JOIN game_status gs ON
+                    gd.id_status = gs.id_status
+                LEFT JOIN game_win_history gwh ON
+                    gd.id_game = gwh.id_game
+                WHERE
+                    gs.name = 'current';";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute();
         return $stmt->fetch();
-    }
-
-
-
-
-
-    /* METHODS IF WE STORE PLAYERS DETAILS IN GAME_DETAILS TABLE */
-
-    // Insert next player details TODO ;)
-    public function insertNextPlayerDetails(array $player)
-    {
-        $query = "INSERT INTO game_details(
-                    `date`,
-                    player_name,
-                    player_country,
-                    player_nbr_record,
-                    player_nbr_collabs,
-                    player_first_record_year,
-                    player_last_tracks
-                )
-                VALUES(CURDATE(), ?, ?, ?, ?, ?, ?, ?)";
-        $stmt = $this->bdd->prepare($query);
-        $stmt->execute();
-        return $stmt->fetchAll();
     }
 }

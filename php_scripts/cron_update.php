@@ -1,5 +1,7 @@
 <?php
 
+// File called via a cron job every day
+
 require '../php_includes/db_connect.php';
 require_once '../php_scripts/services/GameService.php';
 require_once '../php_includes/utils.php';

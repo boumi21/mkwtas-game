@@ -1,5 +1,7 @@
 <?php
 
+// File called at each guess
+
 require '../php_includes/db_connect.php';
 require_once '../php_scripts/services/PlayerService.php';
 require_once '../php_scripts/services/GameService.php';
@@ -7,23 +9,16 @@ require_once '../php_scripts/services/GameService.php';
 $playerService = new PlayerService($bdd);
 $gameService = new GameService($bdd);
 
-//$compare = $playerService->comparePlayers(2,23);
-//echo json_encode($compare);
-
 $guessData = json_decode(file_get_contents("php://input"));
 
 
 
 if (isset($guessData)) {
-    //1. get player guessed details
-    //$guessedPlayer = $playerService->getPlayerInfos($guessData->idPlayer);
-    //2. get player to guess details (check if id_player exists)
-    //$currentPlayer = $playerService->getPlayerInfos($gameService->getCurrentGame()['id_player']);
-    //3. compare the two
 
+    // If the game id is set, we check if it matches the current game
     if (isset($guessData->idGame) && $guessData->idGame != "") {
         if ($guessData->idGame != $gameService->getCurrentGame()['id_game']) {
-            http_response_code(205);
+            http_response_code(205); // Tell the view to reload the page, a new game is available
             return;
         }
     }
@@ -36,7 +31,7 @@ if (isset($guessData)) {
         // We add it to win history
         $gameService->addWinToHistory($guessData->nbrTries);
     }
-    echo json_encode($compare);
+    echo json_encode($compare); // Return the comparison result to the view
     
 } else {
     http_response_code(400); // Set the HTTP response status code to 400
