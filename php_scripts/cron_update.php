@@ -2,58 +2,109 @@
 
 require '../php_includes/db_connect.php';
 require_once '../php_scripts/services/GameService.php';
+require_once '../php_includes/utils.php';
 
-$gameService = new GameService($bdd);
 
+/**
+ * Handles the game update process
+ */
+class GameUpdateHandler 
+{
+    private GameService $gameService;
 
-$nbrOfCurrentGames = $gameService->getNbrOfCurrentGames();
+    public function __construct(PDO $bdd) 
+    {
+        $this->gameService = new GameService($bdd);
+    }
 
-// Verify number of current game (1 expected or 0 if it's the first game)
-if ($nbrOfCurrentGames == 0) {
-    // If no current game exists, we verify if at least one game exists
-    if ($gameService->doesGameExist()) {
-        print_r("Error : No game with status current");
-    } else {
-        // Start a new game
-        print_r("No game, need to start one");
-        $gameService->newDraw();
-        $nextGame = $gameService->getNextGame();
-        if ($nextGame != null) {
-            // Move current cursor
-            $gameService->goNextGame($nextGame['id_game']);
-        } else {
-            print("Error : No next game found after new draw");
+    /**
+     * Main update process
+     */
+    public function update() 
+    {
+        $nbrOfCurrentGames = $this->gameService->getNbrOfCurrentGames();
+
+        try {
+            match ($nbrOfCurrentGames) {
+                0 => $this->handleNoCurrentGame(),
+                1 => $this->handleExistingGame(),
+                default => $this->logError(ERROR_MESSAGES['MULTIPLE_GAMES'])
+            };
+        } catch (Exception $e) {
+            $this->logError("Update failed: " . $e->getMessage());
         }
     }
-} elseif ($nbrOfCurrentGames == 1) {
-    print_r("Current game found");
 
-    $nextGame = $gameService->getNextGame();
-    print_r($nextGame);
-    if ($nextGame != null) {
-        // Move current cursor
-        $gameService->goNextGame($nextGame['id_game']);
+    /**
+     * Handle case when no current game exists
+     */
+    private function handleNoCurrentGame() 
+    {
+        if ($this->gameService->doesGameExist()) {
+            $this->logError(ERROR_MESSAGES['NO_CURRENT_GAME']);
+            return;
+        }
 
-        /**
-         * If we store players details in game_details table
-         */
-        /*
-        // get next player
-        $nextPlayer = $gameService->getPlayer($nextGame['id_player']);
-        // insert player details in database
-        $gameService->insertNextPlayerDetails($nextPlayer);
-        // move current cursor
-        */
-    } else {
-        $gameService->newDraw();
-        $nextGame = $gameService->getNextGame();
-        if ($nextGame != null) {
-            // Move current cursor
-            $gameService->goNextGame($nextGame['id_game']);
-        } else {
-            print("Error : No next game found after new draw");
+        $this->createAndStartNewGame();
+    }
+
+    /**
+     * Handle case when current game exists
+     */
+    private function handleExistingGame() 
+    {
+        if (!$this->moveToNextGame()) {
+            $this->createAndStartNewGame();
         }
     }
-} else {
-    print_r("Error : Multiple current games found");
+
+    /**
+     * Create and start a new game
+     */
+    private function createAndStartNewGame() 
+    {
+        $this->gameService->newDraw();
+        $nextGame = $this->gameService->getNextGame();
+        
+        if ($nextGame === null) {
+            $this->logError(ERROR_MESSAGES['NO_NEXT_GAME']);
+            return;
+        }
+
+        $this->gameService->goNextGame($nextGame['id_game']);
+    }
+
+    /**
+     * Move to the next game if available
+     */
+    private function moveToNextGame() 
+    {
+        $nextGame = $this->gameService->getNextGame();
+        if (!isset($nextGame['id_game'])) {
+            return false;
+        }
+
+        $this->gameService->goNextGame($nextGame['id_game']);
+        return true;
+    }
+
+    /**
+     * Log error message
+     */
+    private function logError(string $message) 
+    {
+        error_log("[ERROR] " . date('Y-m-d H:i:s') . " - " . $message);
+        print($message . PHP_EOL);
+    }
+}
+
+
+
+// Execute the update
+try {
+    $gameUpdateHandler = new GameUpdateHandler($bdd);
+    $gameUpdateHandler->update();
+} catch (Exception $e) {
+    error_log("[FATAL] " . date('Y-m-d H:i:s') . " - Update script failed: " . $e->getMessage());
+    exit(1);
 }

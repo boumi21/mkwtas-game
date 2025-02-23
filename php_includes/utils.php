@@ -22,6 +22,15 @@ enum GuessStatus: int
 }
 
 /**
+ * Constants for game status messages
+ */
+const ERROR_MESSAGES = [
+    'NO_CURRENT_GAME' => 'Error: No game with status current',
+    'NO_NEXT_GAME' => 'Error: No next game found after new draw',
+    'MULTIPLE_GAMES' => 'Error: Multiple current games found'
+];
+
+/**
  * Returns the json file with country codes to their names as an array
  */
 function getCodeToCountryArray(){
