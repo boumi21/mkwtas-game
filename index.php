@@ -3,7 +3,6 @@ require 'php_includes/head.php';
 require 'php_includes/db_connect.php';
 require_once 'php_scripts/db_requests.php';
 include 'php_includes/modals/rules.php';
-include 'php_includes/modals/win.php';
 
 $dbRequester = new DatabaseRequests($bdd);
 ?>
@@ -16,14 +15,14 @@ $dbRequester = new DatabaseRequests($bdd);
         <header class="d-flex flex-wrap justify-content-end py-3 mb-4 border-bottom">
 
             <ul class="nav">
-                <li class="ms-3"><a href="#" data-bs-toggle="modal" data-bs-target="#rulesModal"><img style="height: 2.7em;" src="assets/img/question-circle.svg" alt="Help" title="How to play"></a>
+                <li class="ms-3"><a href="#" data-bs-toggle="modal" data-bs-target="#rulesModal"><img width="40" src="assets/img/question-circle.svg" alt="Help" title="How to play"></a>
 
                 </li>
                 <li class="ms-3"><a href="#">
-                        <img src="assets/img/github.png" style="height: 2.5em" alt="github logo" title="Source code"></a></li>
+                        <img src="assets/img/github.png" width="40" alt="github logo" title="Source code"></a></li>
                 <li class="ms-3">
                     <a href="https://mkwtas.com">
-                        <img style="height: 2.7em;" src="assets/img/mkwtas.png" alt="mkwtas logo" title="mkwtas website">
+                        <img width="40" src="assets/img/mkwtas.png" alt="mkwtas logo" title="mkwtas website">
                     </a>
                 </li>
             </ul>
@@ -35,7 +34,7 @@ $dbRequester = new DatabaseRequests($bdd);
     <!-- Main content -->
     <main>
         <div class="container" x-data="gameApp()">
-            <img src="assets/img/logo.png" alt="logo" class="img-fluid w-50 mx-auto d-block" />
+            <img src="assets/img/logo_opti.avif" alt="logo" class="img-fluid w-50 mx-auto d-block" />
 
             <!-- Guess form dropdown with TomSelect -->
             <div class="row mb-3">
@@ -59,6 +58,8 @@ $dbRequester = new DatabaseRequests($bdd);
                             </select>
                         </div>
                     </form>
+                    <!-- Do not move the include modal. Needs to be in x-data -->
+                    <?php include 'php_includes/modals/win.php'; ?>
                     <p x-show="correctPlayer.name" class="fw-bold text-center"><a @click="showWinModal" href="#" class="text-success text-decoration-none">Well done. Come back tomorrow for a new challenge!</a></p>
                 </div>
             </div>
@@ -85,9 +86,10 @@ $dbRequester = new DatabaseRequests($bdd);
                 <div class="card-header">
                     <div class="row">
                         <div class="col-md-4">
-                            <a :href="'http://localhost/mkwtas-website/player.php?name=' + correctPlayer.name.replace(/ /g,'_')" target="_blank">
+                            <a :href="'https://mkwtas.com/player.php?name=' + correctPlayer.name.replace(/ /g,'_')" aria-label="TASer profile's page" target="_blank">
                                 <span class="fs-3 fw-bold" x-text="correctPlayer.name"></span>
                             </a>
+                            <span x-show=correctPlayer.name class="fs-3">✅</span>
                             <input
                                 class="form-control bg-black"
                                 x-show="correctPlayer.name === ''"
