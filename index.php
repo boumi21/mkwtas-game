@@ -75,7 +75,7 @@ $dbRequester = new DatabaseRequests($bdd);
             <!-- div that shows number of correct guesses for current game -->
             <div class="row mb-2">
                 <div class="col-md-6 mx-auto text-center">
-                    <span x-text="nbrGameCorrectGuesses" class="fw-bold"></span> persons have guessed the TASer #<span x-text="idGame" class="fw-bold"></span>
+                    <span x-text="nbrGameCorrectGuesses" class="fw-bold"></span> people have guessed the TASer #<span x-text="idGame" class="fw-bold"></span>
 
                 </div>
             </div>
