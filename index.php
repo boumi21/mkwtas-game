@@ -43,7 +43,7 @@ $dbRequester = new DatabaseRequests($bdd);
                         <div class="input-group-lg">
                             <select
                                 id="select"
-                                placeholder="Select a TASer..."
+                                placeholder="Choose a TASer..."
                                 x-on:change="guessName();"
                                 x-init="() => { updatePageInfos() }"
                                 x-model="formData.idPlayer"
@@ -136,12 +136,12 @@ $dbRequester = new DatabaseRequests($bdd);
                                         readonly>
                                 </div>
                                 <div class="col-6 order-4">
-                                    <label for="displayNbrCollabs" class="form-label"># of collabs</label>
+                                    <label for="displayNbrCollabs" class="form-label"># of Collabs</label>
                                     <input
                                         type="text"
                                         x-model="correctPlayer.nbrCollabs"
                                         class="form-control"
-                                        :class="correctPlayer.nbrCollabs ? 'bg-success' : 'bg-black'"
+                                        :class="correctPlayer.nbrCollabs !== '' ? 'bg-success' : 'bg-black'"
                                         id="displayNbrCollabs"
                                         disabled
                                         readonly>
@@ -195,10 +195,10 @@ $dbRequester = new DatabaseRequests($bdd);
                         x-transition.duration.500ms>
                         <div class="card-header">
                             <div class="row">
-                                <div class="col-md-4">
+                                <div class="col">
                                     <span class="fs-3" x-text="player.name.value"></span>
                                 </div>
-                                <div class="col d-flex justify-content-end align-items-center">
+                                <div class="col-2 d-flex justify-content-end align-items-center">
                                     <span x-text="'#' + (index + 1)"></span>
 
                                 </div>
@@ -247,7 +247,7 @@ $dbRequester = new DatabaseRequests($bdd);
                                             </div>
                                         </div>
                                         <div class="col-md-6 order-md-4">
-                                            <label for="displayNbrCollabs" class="form-label"># of collabs</label>
+                                            <label for="displayNbrCollabs" class="form-label"># of Collabs</label>
                                             <div class="input-group">
                                                 <input
                                                     type="text"
