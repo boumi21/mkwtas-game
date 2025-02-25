@@ -2,7 +2,10 @@
 <html lang="en">
 
 <head>
-    <title>Title</title>
+    <!-- Umami tag for analytics. See https://umami.is/docs -->
+    <script defer src="https://data.mkwtas.com/script.js" data-website-id="67ac48f9-083a-4f59-b1ed-83a59053afec"></script>
+
+    <title>TASle</title>
     <!-- Required meta tags -->
     <meta charset="utf-8" />
     <meta
