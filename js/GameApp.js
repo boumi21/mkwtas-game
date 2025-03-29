@@ -1,9 +1,13 @@
+// Game logic
+
 function gameApp() {
     return {
+
+        // Values binded to Frontend
         formData: {
-            idPlayer: ''
+            idPlayer: '' // Value of the guessed player
         },
-        correctPlayer: Alpine.$persist({
+        correctPlayer: Alpine.$persist({ // Values binded to the correct player's container
             name: "",
             country: "",
             nbrRecords: "",
@@ -11,10 +15,14 @@ function gameApp() {
             firstRecordYear: "",
             lastTracks: [null, null, null]
         }),
-        guessedPlayers: Alpine.$persist([]),
-        timeOut: false,
-        idGame: Alpine.$persist(""),
-        nbrGameCorrectGuesses: "",
+        guessedPlayers: Alpine.$persist([]), // Array of guessed players
+        timeOut: false, // If the game is over
+        idGame: Alpine.$persist(""), // Game ID
+        nbrGameCorrectGuesses: "", // Number of correct guesses in the current game
+
+
+        // Method called at each guess
+        // Fetches the guessed player's info and updates the page
         async guessName() {
             var guessedPlayerResult = await fetch('php_scripts/guess.php', {
                 method: 'POST',
@@ -52,6 +60,9 @@ function gameApp() {
             this.analyzeGuess(guessedPlayerResult.guessedPlayer);
             this.updatePageInfos();
         },
+
+
+        // Handle each property of the guessed player
         analyzeGuess(guessedPlayer) {
             var guessedPlayerProperties = Object.keys(guessedPlayer);
             // Update correctPlayer with guessedPlayer properties
@@ -65,6 +76,9 @@ function gameApp() {
             }
 
         },
+
+
+        // Updates the correct player's properties with the guessed player's properties if correct
         updateCorrectPlayer(guessProperty, guess) {
             if (guessProperty == 'lastTracks') {
                 for (const [i, track] of guess.entries()) {
@@ -78,6 +92,9 @@ function gameApp() {
                 }
             }
         },
+
+
+        // Update the page infos (game ID, number of correct guesses)
         async updatePageInfos() {
             var pageInfos = await fetch('php_scripts/updatePageInfos.php')
                 .then(function (response) {
@@ -100,6 +117,9 @@ function gameApp() {
             this.idGame = pageInfos.id_game;
             this.nbrGameCorrectGuesses = pageInfos.nbr_correct_guesses;
         },
+
+
+        // Share win in clipboard
         async shareWin(el) {
             var text = "I guessed the TASer of the day #" + this.idGame + " in " + this.guessedPlayers.length + " " + (this.guessedPlayers.length > 1 ? 'tries' : 'try') + "! \nCan you do better? \n\nhttps://play.mkwtas.com";
             try {
@@ -116,10 +136,16 @@ function gameApp() {
                 console.error(error.message);
             }
         },
+
+
+        // Show win modal
         showWinModal() {
             const winModal = new bootstrap.Modal(document.getElementById('winModal'));
             winModal.show();
         },
+
+
+        // Reset the game by removing the local storage and reloading the page
         resetGame() {
             this.timeOut = true;
             localStorage.removeItem("_x_correctPlayer");
@@ -129,5 +155,6 @@ function gameApp() {
                 window.location.reload();
             }, 2000);
         }
+
     }
 }
