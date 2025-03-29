@@ -1,0 +1,60 @@
+@startuml
+!theme toy
+skinparam componentStyle rectangle
+
+package "Frontend" {
+  [Alpine.js] as alpine
+  [Bootstrap 5] as bootstrap
+  [TomSelect] as tomselect
+  
+  component "Browser" as browser {
+    [Game Interface] as game
+  }
+}
+
+package "Backend (PHP)" {
+  [Game Controller] as gamecontroller
+  [Player Service] as playerservice
+  [Game Service] as gameservice
+  [Database Requests] as dbrequests
+}
+
+database "MariaDB" {
+  [Players]
+  [Games]
+  [Records]
+  [Tracks]
+}
+
+cloud "Daily Cron Job" {
+  [Game Update Script]
+}
+
+game --> alpine : uses
+game --> bootstrap : styles
+game --> tomselect : dropdown
+alpine --> gamecontroller : HTTP requests
+
+gamecontroller --> playerservice : player data
+gamecontroller --> gameservice : game state
+playerservice --> dbrequests : queries
+gameservice --> dbrequests : queries
+dbrequests --> MariaDB : SQL
+
+[Game Update Script] --> gameservice : updates daily game
+
+note right of game
+  Main features:
+  - Player guessing
+  - Score tracking
+  - Game state management
+end note
+
+note right of MariaDB
+  Stores:
+  - Player profiles
+  - Game history
+  - TAS records
+  - Track information
+end note
+@enduml
