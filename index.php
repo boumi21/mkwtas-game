@@ -18,7 +18,7 @@ $dbRequester = new DatabaseRequests($bdd);
                 <li class="ms-3"><a href="#" data-bs-toggle="modal" data-bs-target="#rulesModal"><img width="40" src="assets/img/question-circle.svg" alt="Help" title="How to play"></a>
 
                 </li>
-                <li class="ms-3"><a href="#">
+                <li class="ms-3"><a href="https://github.com/boumi21/mkwtas-game">
                         <img src="assets/img/github.png" width="40" alt="github logo" title="Source code"></a></li>
                 <li class="ms-3">
                     <a href="https://mkwtas.com">
