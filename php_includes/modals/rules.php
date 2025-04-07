@@ -11,9 +11,9 @@
         <p>TASle is a mini-game where every day, you have to guess the secret <abbr title="Tool Assisted SpeedRunner">TASer</abbr> from the <abbr title="Mario Kart Wii">MKWii</abbr> community. The goal is to find the TASer in the fewest attempts possible.</p>
         <p>To help you, characteristics in common between your guess and the secret TASer will be shown to you.</p>
         <ul>
-          <li>Characteritics in <span class="badge text-bg-success">green</span> are correct.</li>
-          <li>Characteritics in <span class="badge text-bg-danger">red</span> are incorrect.</li>
-          <li>Characteritics in <span class="badge text-bg-warning">orange</span> are present but at a wrong place.</li>
+          <li>characteristics in <span class="badge text-bg-success">green</span> are correct.</li>
+          <li>characteristics in <span class="badge text-bg-danger">red</span> are incorrect.</li>
+          <li>characteristics in <span class="badge text-bg-warning">orange</span> are present but at a wrong place.</li>
           <li><span class="text-danger">▲</span> means that the correct value is more. <span class="text-danger">▼</span> means that the correct value is less.</li>
         </ul>
         <p class="fw-bold">New TASer every day at 6:00PM (CET/CEST).</p>
