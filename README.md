@@ -7,4 +7,4 @@ Each day, you have to guess a new [Tool Assisted Speedrunner](https://en.wikiped
 - MariaDB 10.11.10
 
 ### Component Diagram
-![TASle Component Diagram](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/boumi21/mkwtas-game/refs/heads/main/component-diagram.iuml?token=GHSAT0AAAAAADBKZMA46AGL6JRYRDSUMJUOZ7H5IIQ)
+![TASle Component Diagram](https://www.plantuml.com/plantuml/proxy?cache=no&src=https://raw.githubusercontent.com/boumi21/mkwtas-game/refs/heads/main/component-diagram.iuml)
