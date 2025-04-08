@@ -85,7 +85,7 @@ class PlayerService
         );
     }
 
-    
+
     /**
      * Compares two players based on their IDs.
      *
@@ -145,7 +145,7 @@ class PlayerService
 
     private function compareNbrRecords($guessedPlayer, $currentPlayer)
     {
-        if ($guessedPlayer->nbrRecords == $currentPlayer->nbrRecords){
+        if ($guessedPlayer->nbrRecords == $currentPlayer->nbrRecords) {
             $statusNbrRecords = GuessStatus::CORRECT->value;
         } else {
             $statusNbrRecords = $guessedPlayer->nbrRecords < $currentPlayer->nbrRecords ? GuessStatus::MORE->value : GuessStatus::LESS->value;
@@ -158,7 +158,7 @@ class PlayerService
 
     private function compareNbrCollabs($guessedPlayer, $currentPlayer)
     {
-        if ($guessedPlayer->nbrCollabs == $currentPlayer->nbrCollabs){
+        if ($guessedPlayer->nbrCollabs == $currentPlayer->nbrCollabs) {
             $statusNbrCollabs = GuessStatus::CORRECT->value;
         } else {
             $statusNbrCollabs = $guessedPlayer->nbrCollabs < $currentPlayer->nbrCollabs ? GuessStatus::MORE->value : GuessStatus::LESS->value;
@@ -175,21 +175,22 @@ class PlayerService
         $lastTracksInfos = $this->trackService->getTracksFromIds($guessedPlayer->lastTracks);
 
         foreach ($lastTracksInfos as $key => $track) {
-            if(array_key_exists($key, $currentPlayer->lastTracks)){
-                if($track['id_track'] == $currentPlayer->lastTracks[$key]){
+            $statusTrack = GuessStatus::INCORRECT->value;
+
+            if (array_key_exists($key, $currentPlayer->lastTracks)) {
+                if ($track['id_track'] == $currentPlayer->lastTracks[$key]) {
                     $statusTrack = GuessStatus::CORRECT->value;
-                } else {
-                    if(in_array($track['id_track'], $currentPlayer->lastTracks)){
-                        $statusTrack = GuessStatus::PRESENT->value;
-                    } else {
-                        $statusTrack = GuessStatus::INCORRECT->value;
-                    }
+                } else if (in_array($track['id_track'], $currentPlayer->lastTracks)) {
+                    $statusTrack = GuessStatus::PRESENT->value;
                 }
-                $lastTracks[$key] = array(
-                    'value' => $track['name_track'],
-                    'status' => $statusTrack
-                );
+            } else if (in_array($track['id_track'], $currentPlayer->lastTracks)) {
+                $statusTrack = GuessStatus::PRESENT->value;
             }
+
+            $lastTracks[$key] = array(
+                'value' => $track['name_track'],
+                'status' => $statusTrack
+            );
         }
         return $lastTracks;
     }
