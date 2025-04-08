@@ -114,9 +114,11 @@ class DatabaseRequests
     // GetTracksFromIds
     public function getTracksFromIds(array $idsTracks)
     {
-        $query = "SELECT * FROM track 
-                    WHERE id_track IN(" . implode(',', $idsTracks) . ") 
-                    ORDER BY FIELD(id_track, " . implode(',', $idsTracks) . ")";
+        $query = "SELECT t.* FROM (" . 
+             implode(" UNION ALL ", array_map(function($id) {
+                 return "SELECT * FROM track WHERE id_track = $id";
+             }, $idsTracks)) . 
+             ") t";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
