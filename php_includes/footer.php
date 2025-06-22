@@ -1,5 +1,5 @@
 <footer>
-    <p class="text-center text-body-secondary">2025 v1.1</p>
+    <p class="text-center text-body-secondary">2025 v1.2</p>
 </footer>
 
 <!-- Bootstrap JavaScript Libraries -->

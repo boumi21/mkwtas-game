@@ -16,10 +16,13 @@ class DatabaseRequests
 
     /* PLAYER REQUESTS */
 
-    // Get all players
+    // Get all players with at least one record
     public function getAllPlayers()
     {
-        $query = "SELECT * FROM player ORDER BY name_player";
+        $query = "SELECT DISTINCT p.* FROM player p
+                    LEFT JOIN record_with_players rwp ON p.id_player = rwp.id_player
+                    WHERE rwp.id_record is not null
+                    ORDER BY p.name_player";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
@@ -114,11 +117,11 @@ class DatabaseRequests
     // GetTracksFromIds
     public function getTracksFromIds(array $idsTracks)
     {
-        $query = "SELECT t.* FROM (" . 
-             implode(" UNION ALL ", array_map(function($id) {
-                 return "SELECT * FROM track WHERE id_track = $id";
-             }, $idsTracks)) . 
-             ") t";
+        $query = "SELECT t.* FROM (" .
+            implode(" UNION ALL ", array_map(function ($id) {
+                return "SELECT * FROM track WHERE id_track = $id";
+            }, $idsTracks)) .
+            ") t";
         $stmt = $this->bdd->prepare($query);
         $stmt->execute();
         return $stmt->fetchAll();
