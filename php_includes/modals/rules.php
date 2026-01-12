@@ -16,7 +16,7 @@
           <li>characteristics in <span class="badge text-bg-warning">orange</span> are present but at a wrong place.</li>
           <li><span class="text-danger">▲</span> means that the correct value is more. <span class="text-danger">▼</span> means that the correct value is less.</li>
         </ul>
-        <p class="fw-bold">New TASer every day at 6:00PM (CET/CEST).</p>
+        <p class="fw-bold">New TASer every day at 6:00PM (UTC).</p>
         <p class="text-end fst-italic">
           Inspired from <a href="https://trackmadle.gearfive.org/">TrackMadle</a> and other daily games <br>
           Data from <a href="https://mkwtas.com">mkwtas.com</a>
